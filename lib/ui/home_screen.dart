@@ -17,9 +17,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool isLoading = false;
 
   void _addTask() {
-    if (taskController.text.isNotEmpty &&
-        durationController.text.isNotEmpty &&
-        priority != null) {
+    if (taskController.text.isNotEmpty && durationController.text.isNotEmpty && priority != null) {
       setState(() {
         tasks.add({
           "name": taskController.text,
@@ -70,66 +68,97 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Schedule Generator")),
+      appBar: AppBar(
+        title: Text("Schedule Generator", style: TextStyle(fontWeight: FontWeight.bold)),
+        centerTitle: true,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
             TextField(
               controller: taskController,
-              decoration: InputDecoration(labelText: "Nama Tugas"),
+              decoration: InputDecoration(
+                labelText: "Nama Tugas",
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              ),
             ),
+            SizedBox(height: 12),
             TextField(
               controller: durationController,
-              decoration: InputDecoration(labelText: "Durasi (menit)"),
+              decoration: InputDecoration(
+                labelText: "Durasi (menit)",
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              ),
               keyboardType: TextInputType.number,
             ),
-            DropdownButton<String>(
+            SizedBox(height: 12),
+            DropdownButtonFormField<String>(
               value: priority,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              ),
               hint: Text("Pilih Prioritas"),
               onChanged: (value) => setState(() => priority = value),
-              items: ["Tinggi", "Sedang", "Rendah"]
-                  .map((priorityMember) => DropdownMenuItem(
-                      value: priorityMember, child: Text(priorityMember)))
-                  .toList(),
+              items: ["Tinggi", "Sedang", "Rendah"].map((priorityMember) =>
+                DropdownMenuItem(value: priorityMember, child: Text(priorityMember))
+              ).toList(),
             ),
+            SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                ElevatedButton(
+                ElevatedButton.icon(
                   onPressed: _addTask,
-                  child: Text("Tambahkan Tugas"),
+                  icon: Icon(Icons.add),
+                  label: Text("Tambahkan"),
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  ),
                 ),
-                ElevatedButton(
+                ElevatedButton.icon(
                   onPressed: _clearTasks,
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                  child: Text("Hapus Semua",
-                      style: TextStyle(color: Colors.white)),
+                  icon: Icon(Icons.delete, color: Colors.white),
+                  label: Text("Hapus Semua", style: TextStyle(color: Colors.white)),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  ),
                 ),
               ],
             ),
+            SizedBox(height: 16),
             Expanded(
               child: ListView.builder(
                 itemCount: tasks.length,
                 itemBuilder: (context, index) {
                   final task = tasks[index];
                   return Card(
-                    elevation: 3,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    elevation: 4,
                     margin: EdgeInsets.symmetric(vertical: 6),
                     child: ListTile(
-                      title: Text("${task['name']}"),
+                      leading: Icon(Icons.task_alt, color: Colors.blueAccent),
+                      title: Text("${task['name']}", style: TextStyle(fontWeight: FontWeight.bold)),
                       subtitle: Text(
-                          "Prioritas: ${task['priority']} | Durasi: ${task['duration']} menit"),
+                        "Prioritas: ${task['priority']} | Durasi: ${task['duration']} menit",
+                        style: TextStyle(color: Colors.grey.shade700),
+                      ),
                     ),
                   );
                 },
               ),
             ),
+            SizedBox(height: 16),
             isLoading
                 ? CircularProgressIndicator()
                 : ElevatedButton(
                     onPressed: _generateSchedule,
-                    child: Text("Generate Schedule"),
+                    style: ElevatedButton.styleFrom(
+                      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    child: Text("Generate Schedule", style: TextStyle(fontSize: 16)),
                   ),
           ],
         ),
